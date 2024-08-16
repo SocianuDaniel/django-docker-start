@@ -18,3 +18,24 @@ class ModelTest(TestCase):
 
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
+
+    def test_user_has_normalise_email(self):
+        email_checks = [
+            ['test@EXAMPLE.com', 'test@example.com'],
+            ['test1@example.COM', 'test1@example.com'],
+            ['test2@EXAMPLE.COM', 'test2@example.com'],
+            ['Test3@Example.Com', 'Test3@example.com']
+        ]
+        for email, expect in email_checks:
+            user = get_user_model().objects.create_user(
+                email=email,
+                password="pass123"
+                )
+            self.assertEqual(user.email, expect)
+
+    def test_input_email_is_empty(self):
+        with self.assertRaises(ValueError):
+            get_user_model().objects.create_user(
+                email='',
+                password="pass123"
+            )
